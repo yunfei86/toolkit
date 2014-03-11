@@ -1,0 +1,320 @@
+h1
+{
+   font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+   background-color: #74AF92;
+   border: outset;
+   border-width: thin;
+   border-color: #232331;
+   color: #005CB8;
+   text-align: center;
+   size: 1.0em;
+}
+h2
+{
+   font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+   text-align: center;
+   size: 0.7em;
+}
+p{
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+table
+{
+    border-collapse:collapse;
+    width:95%;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+    margin: auto;
+}
+th, td
+{
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+th
+{
+    height:40px;
+    background-color:gray;
+    color:white;
+}
+td
+{
+    font-size: 0.75em;
+    text-align:left;
+    vertical-align:top;
+    padding:2px;
+}
+table.noborder
+{
+    border: 0px;
+    padding: 0px;
+    width: 40%;
+    margin-left: 45px;
+    background-color: #f0f0f0;
+    text-align: left;
+    font-style: italic;
+    font-size: 0.7em;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+td.noborder
+{
+    border: 0px;
+    padding: 0px;
+}
+td.short
+{
+    border: 0px;
+    padding: 0px;
+    width: 75px;
+}
+#info{
+    margin-right: 30;
+    color: #33339f;
+    text-align: right;
+    font-style: italic;
+    font-size: 0.7em;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+#infol{
+    margin-left: 30;
+    color: #33339f;
+    text-align: left;
+    font-style: italic;
+    font-size: 0.7em;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+#contentcontainer
+{
+    clear: both;
+    float: left;
+    width: 100%;
+}
+
+#ionlogo
+{
+    float: left;
+    background: url("../images/logo.png") no-repeat;
+    background-position: left;
+    width: 33%;
+    height: 150px;
+}
+
+#seqencerpicture
+{
+    float: inherit;
+    background: url("../images/proton.jpg") no-repeat;
+    background-position: center;
+    width: 33%;
+    height: 150px;
+}
+
+#controls
+{
+    float: right;
+    text-align: right;
+    width: 33%;
+    height: 150px;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+#diskOk
+{
+    background: url("../images/green.png") no-repeat;
+    background-position: center;
+}
+
+#diskWarn
+{
+    background: url("../images/yellow.png") no-repeat;
+    background-position: center;
+}
+
+#center
+{
+    clear: both;
+    float: left;
+    display: inline;
+}
+
+.dark
+{
+    background-color: #e0e0e0;
+}
+
+.up
+{
+    color: #006400;
+}
+
+.down
+{
+    color: #fa0000;
+}
+
+.diffText1
+{
+   color: #ff0000;
+}
+
+.diffText2
+{
+   color: #0000ff;
+}
+
+#topLeft
+{
+    -moz-border-radius-topleft:  10px;
+    -webkit-border-top-left-radius:   10px;
+    border-right: 1px solid black;
+    border-left: 0;
+    border-top: 0;
+}
+
+#topRight
+{
+    -moz-border-radius-topright: 10px;
+    -webkit-border-top-right-radius:  10px;
+    border-left: 1px solid black;
+    border-right: 0;
+    border-top: 0;
+}
+
+#bottomLeft
+{
+    -moz-border-radius-bottomleft:  10px;
+    -webkit-border-bottom-left-radius:   10px;
+    border: 0;
+    height: 12px;
+}
+
+#bottomRight
+{
+    -moz-border-radius-bottomright: 10px;
+    -webkit-border-bottom-right-radius:  10px;
+    border: 0;
+    height: 12px;
+}
+
+#blank
+{
+    border: 0;
+    height: 12px;
+}
+
+.bigbutton
+{
+    border: 1px solid #006;
+    background: #9cf;
+    height: 20px;
+    width: 60px;
+}
+
+.redText
+{
+    color: red;
+    text-align: left;
+    font-style: italic;
+    font-size: 0.7em;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.blueText
+{
+    color: blue;
+    text-align: left;
+    font-style: italic;
+    font-size: 0.7em;
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+div.img
+{
+    margin:2px;
+    border:1px solid #0000ff;
+    height:auto;
+    width:auto;
+    float:left;
+    text-align:center;
+}
+div.img img
+{
+    display:inline;
+    margin:3px;
+    border:1px solid #ffffff;
+}
+div.img a:hover img
+{
+    border:1px solid #0000ff;
+}
+div.desc
+{
+    text-align:center;
+    font-weight:normal;
+    width:200px;
+    margin:2px;
+}
+
+#tabs_wrapper {
+	width: 422px;
+}
+#tabs_container {
+	border-bottom: 1px solid #ccc;
+}
+#tabs {
+	list-style: none;
+	padding: 5px 0 4px 0;
+	margin: 0 0 0 10px;
+	font: 0.75em arial;
+}
+#tabs li {
+	display: inline;
+}
+#tabs li a {
+	border: 1px solid #ccc;
+	padding: 4px 6px;
+	text-decoration: none;
+	background-color: #eeeeee;
+	border-bottom: none;
+	outline: none;
+	border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+}
+#tabs li a:hover {
+	background-color: #dddddd;
+	padding: 4px 6px;
+}
+#tabs li.active a {
+	border-bottom: 1px solid #fff;
+	background-color: #fff;
+	padding: 4px 6px 5px 6px;
+	border-bottom: none;
+}
+#tabs li.active a:hover {
+	background-color: #eeeeee;
+	padding: 4px 6px 5px 6px;
+	border-bottom: none;
+}
+
+#tabs li a.icon_accept {
+	background-image: url(accept.png);
+	background-position: 5px;
+	background-repeat: no-repeat;
+	padding-left: 24px;
+}
+#tabs li a.icon_accept:hover {
+	padding-left: 24px;
+}
+
+#tabs_content_container {
+	border: 1px solid #ccc;
+	border-top: none;
+	padding: 10px;
+	width: 400px;
+}
+.tab_content {
+	display: none;
+}
+
+

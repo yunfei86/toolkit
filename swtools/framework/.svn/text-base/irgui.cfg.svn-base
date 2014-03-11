@@ -1,0 +1,11 @@
+#This is a list file which organizes the tests in multi threaded slots
+#
+
+#This section is for IR GUI test
+#This section defines the module, thread name, python filename, class name and a list of tests
+
+[2_IRGUItest]
+_threadname=VMthread
+_pyname=irguitest.py
+_classname=GUItest
+_testlist=[test1_login, test2_link_e1, test3_servicelayer, test4_create_workflow_aneuploidy, test5_create_workflow_annotatevariants, test6_create_workflow_metagenomics, test7_create_workflow_dnasingle, test8_create_workflow_dnapaired, test9_create_workflow_dnatumor, test10_create_workflow_dnatrio]

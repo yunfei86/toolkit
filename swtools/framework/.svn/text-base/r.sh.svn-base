@@ -1,0 +1,25 @@
+#This is a script for running your test case
+#Removing the old pyc code is always a good idea as it will run the current python code
+#Level of the display messages in the increasing order:
+#   debug
+#   info
+#   warning
+#   error
+#   critical
+
+find testdir -name "*.pyc" -exec rm {} \;
+if [ $# = 1 ] ; then
+    DEBUG_LEVEL=$1
+else
+    DEBUG_LEVEL='INFO'
+fi
+echo ${DEBUG_LEVEL} > debug.txt
+python -B src/iontester.py -t testlist.cfg -r testdir -n "Parallel Deployment Test On VM, Sirius and IonJenkins" -d -l debug
+#python -B src/iontester.py -t testgpu.cfg -r testdir -n "Test Gpu" -d -l debug
+#python -B src/iontester.py -r testdir/deploymenttest-vm -n "Deployment Test On VM"
+#python -B src/iontester.py -r testdir/tvcdeployment-serenity -n "Variant Calling Test"
+
+#python -B src/iontester.py -r testdir/deploymenttest-sirius -n "Deployment Test On Sirius"
+#python -B src/iontester.py -r testdir/tvcregression-serenity -n "Variant Calling Regession Test"
+
+rm debug.txt

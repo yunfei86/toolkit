@@ -1,0 +1,17 @@
+#This is a list file which organizes the tests in multi threaded slots
+#
+
+#This section is for IR deployment test
+#This section defines the module, thread name, python filename, class name and a list of tests
+
+[1_deploymenttest]
+_threadname=VMthread
+_pyname=irdeploymenttest.py
+_classname=irDeploymentTest
+_testlist=[test01_InstallirconfigPackage,test02_CheckCfgIonreporterMongo,test03_CheckCfgIonreporterPythonDrmaa,test04_CheckCfgIonreporterTomcat,test05_CheckSWIonreporterAnalysis,test06_CheckSWIonreporterServer,test07_CheckSWIonreporterAxeda,test08_CheckSWIonreporterCompendia,test09_CheckSWIonreporterIruClient,test10_CheckSWIonreporterIruServer,test11_CheckSWIonreporterManager,test12_CheckSWIonreporterPlugins,test13_CheckSWIonreporterRef,test14_CheckSWIonreporterUI,test15_CheckSWIonreporterE1enabler,test16_CheckMongodbLauched,test17_CheckTomcatLauched,test18_CheckMysqlLauched,test19_CheckLog]
+
+[2_IRGUItest]
+_threadname=VMthread
+_pyname=irguitest.py
+_classname=GUItest
+_testlist=[test1_login, test2_link_e1, test3_servicelayer]
