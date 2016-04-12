@@ -3,6 +3,6 @@ toolskit
 
 All tools:
 
- - `biotools`: homemade bioinformatic tools
- - `swtools`: homemade software development tools
+ - `biotools`: bioinformatic tools
+ - `swtools`: software development tools
  
