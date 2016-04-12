@@ -67,7 +67,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 Updated by Yunfei Li
 
+Copyright (c) 2016, Yunfei Li
+All rights reserved.
+
 Enable HTMLTestRunner to append test result to a report
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+* Neither the name Wai Yip Tung nor the names of its contributors may be
+  used to endorse or promote products derived from this software without
+  specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 
@@ -76,7 +104,6 @@ from itertools import islice
 
 __author__ = "Wai Yip Tung"
 __version__ = "0.8.2"
-
 __updater__ = "Yunfei Li"
 
 """
@@ -384,12 +411,12 @@ a.popup_link:hover {
     padding: 2px;
 }
 #total_row  { font-weight: bold; }
-.passClass  { background-color: #6c6; }
-.failClass  { background-color: #c60; }
-.errorClass { background-color: #c00; }
-.passCase   { color: #6c6; }
-.failCase   { color: #c60; font-weight: bold; }
-.errorCase  { color: #c00; font-weight: bold; }
+.passClass  { background-color: #32CD32; }
+.failClass  { background-color: #FF4500; }
+.errorClass { background-color: #FFA500; }
+.passCase   { color: #32CD32; }
+.failCase   { color: #FF4500; font-weight: bold; }
+.errorCase  { color: #FFA500; font-weight: bold; }
 .hiddenRow  { display: none; }
 .testcase   { margin-left: 2em; }
 
@@ -514,7 +541,30 @@ a.popup_link:hover {
     # ENDING
     #
 
-    ENDING_TMPL = """<div id='ending'>&nbsp;</div>"""
+    ENDING_TMPL = r"""
+<div id='ending'>&nbsp;</div>
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+        ['Status', 'Sum'],['Pass',  %(Pass)s],['Fail',  %(fail)s],['Error', %(error)s],
+        ]);
+
+        var options = {
+          title: '%(title)s',
+          is3D: true,
+          colors: ['#32CD32', '#FF4500', '#FFA500'],
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+      }
+    </script>
+
+    <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+"""  # variables: (title, pass, fail, error)
 
 # -------------------- The end of the Template class -------------------
 
@@ -745,7 +795,7 @@ class HTMLTestRunner(Template_mixin):
         stylesheet = self._generate_stylesheet()
         heading = self._generate_heading(report_attrs)
         report = self._generate_report(result)
-        ending = self._generate_ending()
+        ending = self._generate_ending(result)
         output = self.HTML_TMPL % dict(
             title = saxutils.escape(self.title),
             generator = generator,
@@ -863,8 +913,14 @@ class HTMLTestRunner(Template_mixin):
         if not has_output:
             return
 
-    def _generate_ending(self):
-        return self.ENDING_TMPL
+    def _generate_ending(self, result):
+        ending = self.ENDING_TMPL % dict(
+            title = "Test Report",
+            Pass = str(self.ps.pass_count + result.success_count),
+            fail = str(self.ps.fail_count + result.failure_count),
+            error = str(self.ps.err_count + result.error_count),
+        )
+        return ending
 
 
 ##############################################################################
