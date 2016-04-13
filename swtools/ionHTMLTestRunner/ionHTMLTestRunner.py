@@ -465,9 +465,11 @@ a.popup_link:hover {
 <col align='right' />
 <col align='right' />
 <col align='right' />
+<col align='right' />
 </colgroup>
 <tr id='header_row'>
     <td>Test Group/Test case</td>
+    <td>Duration</td>
     <td>Count</td>
     <td>Pass</td>
     <td>Fail</td>
@@ -477,6 +479,7 @@ a.popup_link:hover {
 %(test_list)s
 <tr id='total_row'>
     <td>Total</td>
+    <td>%(totDuration)s</td>
     <td>%(count)s</td>
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
@@ -484,24 +487,25 @@ a.popup_link:hover {
     <td>&nbsp;</td>
 </tr>
 </table>
-""" # variables: (test_list, count, Pass, fail, error)
+""" # variables: (test_list, totDuration, count, Pass, fail, error)
 
     REPORT_CLASS_TMPL = r"""
 <tr class='%(style)s'>
     <td>%(desc)s</td>
+    <td>%(duration)s</td>
     <td>%(count)s</td>
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
     <td>%(error)s</td>
     <td><a href="javascript:showClassDetail('%(cid)s',%(count)s)">Detail</a></td>
 </tr>
-""" # variables: (style, desc, count, Pass, fail, error, cid)
+""" # variables: (style, desc, duration, count, Pass, fail, error, cid)
 
 
     REPORT_TEST_WITH_OUTPUT_TMPL = r"""
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
-    <td colspan='5' align='center'>
+    <td colspan='6' align='center'>
 
     <!--css div popup start-->
     <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_%(tid)s')" >
@@ -665,30 +669,10 @@ class _TestResult(TestResult):
             sys.stderr.write('F')
 
 
-class getPreiousHTMLTestRunnerReport():
-    def __init__(self, report):
-        preReport = open(report,"r")
-        preTestCases=[]
-        for line in preReport:
-                status=re.match("<p class='attribute'><strong>Status:</strong> Pass (\d+) Failure (\d+) Error (\d+)</p>", line)
-                if status:
-                    pass_count, fail_count, err_count = int(status.group(1).strip()),int(status.group(2).strip()),int(status.group(3).strip())
-                timeCost=re.match("<p class='attribute'><strong>Start Time:</strong>(.*)</p>", line)
-                if timeCost:
-                    self.totTime = timeCost.group(1)
-
-                if line.startswith("<table id='result_table'>"):
-                    parsing = True
-                    a=list(islice(file, 17))
-                if line.startswith("<tr id='total_row'>"):
-                    parsing = False
-                if parsing:
-                    preTestCases.append(line)
-
-
 class retrieveFromPreiousReport():
     pass_count, fail_count, err_count = 0,0,0
-    totTime=""
+    startTime=""
+    totalDuration=""
     preTestCases=""
     def __init__(self, report=None, appendMode=None):
         if appendMode == None:
@@ -700,12 +684,15 @@ class retrieveFromPreiousReport():
                 status=re.match("<p class='attribute'><strong>Status:</strong> Pass (\d+) Failure (\d+) Error (\d+)</p>", line)
                 if status:
                     self.pass_count, self.fail_count, self.err_count = int(status.group(1).strip()),int(status.group(2).strip()),int(status.group(3).strip())
-                timeCost=re.match("<p class='attribute'><strong>Start Time:</strong>(.*)</p>", line)
+                startTime=re.match("<p class='attribute'><strong>Start Time:</strong>(.*)</p>", line)
+                if startTime:
+                    self.startTime = startTime.group(1).strip()
+                timeCost=re.match("<p class='attribute'><strong>Duration:</strong>(.*)</p>", line)
                 if timeCost:
-                    self.totTime = timeCost.group(1)
+                    self.totalDuration = timeCost.group(1).strip()
                 if line.startswith("<table id='result_table'>"):
                     parsing = True
-                    list(islice(preReport, 16))
+                    list(islice(preReport, 18))
                     line = preReport.next()
                 if line.startswith("<tr id='total_row'>"):
                     parsing = False
@@ -722,6 +709,7 @@ class HTMLTestRunner(Template_mixin):
         self.stream = stream
         self.verbosity = verbosity
         self.totalDuration=""
+        self.caseDuration=""
         self.ps=retrieveFromPreiousReport(report=stream, appendMode=appendMode)
         if title is None:
             self.title = self.DEFAULT_TITLE
@@ -765,29 +753,30 @@ class HTMLTestRunner(Template_mixin):
         Return report attributes as a list of (name, value).
         Override this to add custom attributes.
         """
-        startTime = str(self.startTime)[:19]
-        duration = str(self.stopTime - self.startTime)
-
         FMT = '%Y-%m-%d %H:%M:%S'
+        startTime = self.startTime.strftime(FMT)
+        duration = strfdelta(self.stopTime - self.startTime, '%H:%M:%S')
+        self.caseDuration = duration
 
-        if self.totalDuration == '':
+        if self.ps.totalDuration == '':
             self.totalDuration = duration
         else:
-            self.totalDuration = datetime.datetime.strptime(self.totalDuration,FMT) + duration
+            t = datetime.datetime.strptime(self.ps.totalDuration,"%H:%M:%S")
+            delta = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
+            self.totalDuration = strfdelta(delta + (self.stopTime - self.startTime), '%H:%M:%S')
         status = []
-        if result.success_count: status.append('Pass %d'    % (self.ps.pass_count + result.success_count))
-        if result.failure_count: status.append('Failure %d' % (self.ps.fail_count + result.failure_count))
-        if result.error_count:   status.append('Error %d'   % (self.ps.err_count + result.error_count))
+        status.append('Pass %d'    % (self.ps.pass_count + result.success_count))
+        status.append('Failure %d' % (self.ps.fail_count + result.failure_count))
+        status.append('Error %d'   % (self.ps.err_count + result.error_count))
         if status:
             status = ' '.join(status)
         else:
             status = 'none'
         return [
-            ('Start Time', startTime),
-            ('Duration', duration),
+            ('Start Time', startTime if self.ps.startTime == '' else self.ps.startTime),
+            ('Duration', duration if self.ps.totalDuration == '' else self.totalDuration),
             ('Status', status),
         ]
-
 
     def generateReport(self, test, result):
         report_attrs = self.getReportAttributes(result)
@@ -847,11 +836,12 @@ class HTMLTestRunner(Template_mixin):
             else:
                 name = "%s.%s" % (cls.__module__, cls.__name__)
             doc = cls.__doc__ and cls.__doc__.split("\n")[0] or ""
-            desc = doc and '%s: %s' % (name, doc) or name
+            desc = doc and '%s- %s' % (name, doc) or name
 
             row = self.REPORT_CLASS_TMPL % dict(
                 style = ne > 0 and 'errorClass' or nf > 0 and 'failClass' or 'passClass',
                 desc = desc,
+                duration = self.caseDuration,
                 count = np+nf+ne,
                 Pass = np,
                 fail = nf,
@@ -865,6 +855,7 @@ class HTMLTestRunner(Template_mixin):
 
         report = self.REPORT_TMPL % dict(
             test_list = ''.join(rows),
+            totDuration = self.totalDuration,
             count = str(self.ps.pass_count+ self.ps.fail_count+ self.ps.err_count+ result.success_count+result.failure_count+result.error_count),
             Pass = str(self.ps.pass_count + result.success_count),
             fail = str(self.ps.fail_count + result.failure_count),
@@ -922,6 +913,52 @@ class HTMLTestRunner(Template_mixin):
         )
         return ending
 
+
+##############################################################################
+# Format timedelta
+##############################################################################
+
+
+from string import Template
+
+
+class DeltaTemplate(Template):
+    delimiter = "%"
+
+def strfdelta(tdelta, fmt):
+    d = {"D": tdelta.days}
+    hours, rem = divmod(tdelta.seconds, 3600)
+    minutes, seconds = divmod(rem, 60)
+    d["H"] = '{:02d}'.format(hours)
+    d["M"] = '{:02d}'.format(minutes)
+    d["S"] = '{:02d}'.format(seconds)
+    t = DeltaTemplate(fmt)
+    return t.substitute(**d)
+
+##############################################################################
+# Enable paramerized test cases
+##############################################################################
+
+
+class ParametrizedTestCase(unittest.TestCase):
+    """ TestCase classes that want to be parametrized should
+        inherit from this class.
+    """
+    def __init__(self, methodName='runTest', param=None):
+        super(ParametrizedTestCase, self).__init__(methodName)
+        self.param = param
+
+    @staticmethod
+    def parametrize(testcase_klass, param=None):
+        """ Create a suite containing all tests taken from the given
+            subclass, passing them the parameter 'param'.
+        """
+        testloader = unittest.TestLoader()
+        testnames = testloader.getTestCaseNames(testcase_klass)
+        suite = unittest.TestSuite()
+        for name in testnames:
+            suite.addTest(testcase_klass(name, param=param))
+        return suite
 
 ##############################################################################
 # Facilities for running tests from the command line
